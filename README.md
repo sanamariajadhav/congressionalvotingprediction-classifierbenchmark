@@ -45,7 +45,7 @@ All algorithms implemented using only: `pandas`, `numpy`, `math`, `random`, `mat
   </tr>
   <tr>
     <td style="border: none; padding: 6px 24px 6px 0;"><strong>Missing Values</strong></td>
-    <td style="border: none; padding: 6px 0;">Abstentions encoded as `?` — retained as a third category (2), not imputed, as abstention is itself politically informative</td>
+    <td style="border: none; padding: 6px 0;">Abstentions encoded as <code>?</code> — retained as a third category (2), not imputed, as abstention is itself politically informative</td>
   </tr>
   <tr>
     <td style="border: none; padding: 6px 24px 6px 0;"><strong>Train / Test Split</strong></td>
@@ -113,36 +113,40 @@ All algorithms implemented using only: `pandas`, `numpy`, `math`, `random`, `mat
   </tr>
   <tr>
     <td style="border: none; padding: 6px 24px 6px 0;">Decision Tree</td>
-    <td style="border: none; padding: 6px 20px 6px 0;">—</td>
-    <td style="border: none; padding: 6px 20px 6px 0;">—</td>
-    <td style="border: none; padding: 6px 20px 6px 0;">—</td>
-    <td style="border: none; padding: 6px 0;">—</td>
+    <td style="border: none; padding: 6px 20px 6px 0;">0.9655</td>
+    <td style="border: none; padding: 6px 20px 6px 0;">0.9487</td>
+    <td style="border: none; padding: 6px 20px 6px 0;">0.9737</td>
+    <td style="border: none; padding: 6px 0;">0.9610</td>
   </tr>
   <tr>
     <td style="border: none; padding: 6px 24px 6px 0;">KNN (k=7)</td>
-    <td style="border: none; padding: 6px 20px 6px 0;">—</td>
-    <td style="border: none; padding: 6px 20px 6px 0;">—</td>
-    <td style="border: none; padding: 6px 20px 6px 0;">—</td>
-    <td style="border: none; padding: 6px 0;">—</td>
+    <td style="border: none; padding: 6px 20px 6px 0;">0.9195</td>
+    <td style="border: none; padding: 6px 20px 6px 0;">0.9429</td>
+    <td style="border: none; padding: 6px 20px 6px 0;">0.8684</td>
+    <td style="border: none; padding: 6px 0;">0.9041</td>
   </tr>
   <tr>
     <td style="border: none; padding: 6px 24px 6px 0;">Naive Bayes</td>
-    <td style="border: none; padding: 6px 20px 6px 0;">—</td>
-    <td style="border: none; padding: 6px 20px 6px 0;">—</td>
-    <td style="border: none; padding: 6px 20px 6px 0;">—</td>
-    <td style="border: none; padding: 6px 0;">—</td>
+    <td style="border: none; padding: 6px 20px 6px 0;">0.8966</td>
+    <td style="border: none; padding: 6px 20px 6px 0;">0.8919</td>
+    <td style="border: none; padding: 6px 20px 6px 0;">0.8684</td>
+    <td style="border: none; padding: 6px 0;">0.8800</td>
   </tr>
 </table>
 
-F1-Score was selected as the primary evaluation metric given the 61/39 class imbalance — it penalises classifiers that sacrifice Precision for Recall or vice versa, and is more informative than raw Accuracy on imbalanced datasets.
+F1-Score is the primary evaluation metric, selected for its ability to penalise classifiers that sacrifice Precision for Recall on this moderately imbalanced dataset (61/39).
+
+**Recommended model: Decision Tree** — leads on all four metrics (Accuracy 0.9655, Precision 0.9487, Recall 0.9737, F1 0.9610). Its interpretability is an additional advantage: the trained tree produces human-readable if-else rules directly traceable to specific congressional votes, making predictions auditable. For applications where cross-fold stability is the priority, Naive Bayes is preferred due to its lower variance across 5-fold CV.
 
 ---
 
 ### Key Findings
 
+- **Decision Tree is the clear benchmark winner**, achieving the highest score on every metric — an unusual result that reflects the strongly rule-like structure of congressional voting patterns, which decision boundaries align with naturally
 - **Physician Fee Freeze** and **El Salvador Aid** emerged as the strongest predictors of party affiliation by information gain — consistent with the major partisan divides of the 1984 U.S. Congress
+- **k-Sensitivity analysis** showed KNN performance peaks at small odd values of k and stabilises by k=7, confirming the chosen value sits at the plateau rather than the elbow — a deliberate conservative choice
 - **Hamming distance** is the correct choice for KNN on this dataset — Euclidean distance would impose a false numeric ordering on categorical vote values (0=No, 1=Yes, 2=Abstain)
-- **Naive Bayes accuracy is robust** across a wide range of Laplace smoothing values (α=0.1–2.0), validating the choice of α=1.0
+- **Naive Bayes accuracy is robust** across a wide range of Laplace smoothing values (α=0.1–2.0), validating the choice of α=1.0; performance degrades only at extremes
 - **Abstention as a third category** rather than imputed yes/no preserves political signal — legislators who abstain on specific votes exhibit distinct partisan patterns
 
 ---
